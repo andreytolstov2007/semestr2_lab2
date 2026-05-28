@@ -12,20 +12,15 @@ public:
     }
     
     explicit DynamicArray(long length) {
-        if (length < 0) {
-            throw IndexOutOfRange();
-        }
+        if (length < 0) { throw IndexOutOfRange(); }
+
         arr = new T[length]();
         array_length = length;
     }
 
     DynamicArray(T *items, long length) {
-        if (items == nullptr) {
-            throw NullPointerError();
-        }
-        if (length < 0) {
-            throw IndexOutOfRange();
-        }
+        if (items == nullptr) { throw NullPointerError(); }
+        if (length < 0) { throw IndexOutOfRange(); }
 
         arr = new T[length]();
         array_length = length;
@@ -42,32 +37,22 @@ public:
         }
     }
 
-    ~DynamicArray() {
-        delete []arr;
-    }
+    ~DynamicArray() { delete []arr; }
 
     T Get_arr_index(long arr_index) const {
-        if ((arr_index < 0) || (arr_index >= array_length)) {
-            throw IndexOutOfRange();
-        }
+        if ((arr_index < 0) || (arr_index >= array_length)) { throw IndexOutOfRange(); }
         return arr[arr_index];
     }
 
-    long Get_length() const {
-        return array_length;
-    }
+    long Get_length() const { return array_length; }
 
     void Set(long arr_index, T value) {
-        if ((arr_index < 0) || (arr_index >= array_length)) {
-            throw IndexOutOfRange();
-        }
+        if ((arr_index < 0) || (arr_index >= array_length)) { throw IndexOutOfRange(); }
         arr[arr_index] = value;
     }
     
     void Resize(long new_length) {
-        if (new_length < 0) {
-            throw IndexOutOfRange();
-        }
+        if (new_length < 0) { throw IndexOutOfRange(); }
 
         T *new_arr = new T[new_length]();
         if (new_length <= array_length) {
@@ -84,6 +69,7 @@ public:
         array_length = new_length;
         arr = new_arr;
     }
+    
     DynamicArray<T>& operator=(const DynamicArray<T> &other) {
         if (this != &other) {
             delete []arr;
