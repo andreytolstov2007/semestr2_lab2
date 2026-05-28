@@ -10,18 +10,14 @@ private:
     T value;
 
 public:
-    Option() {
-        has_value = false;
-    }
+    Option() { has_value = false; }
     
     explicit Option(const T &val) {
         has_value = true;
         value = val;
     }
     
-    bool Is_some() const { 
-        return has_value;
-    }
+    bool Is_some() const {  return has_value; }
 
     bool Is_none() const { 
         if (has_value == true) {
