@@ -23,35 +23,25 @@ public:
     ~ListSequence() override { delete items; }
     
     T Get_first() const override {
-        if (Get_length() == 0) {
-            throw EmptyCollection();
-        }
+        if (Get_length() == 0) { throw EmptyCollection(); }
         return items -> Get_first();
     }
     
     T Get_last() const override {
-        if (Get_length() == 0) {
-            throw EmptyCollection();
-        }
+        if (Get_length() == 0) { throw EmptyCollection(); }
         return items -> Get_last();
     }
     
     T Get(long index) const override {
-        if ((index < 0) || (index >= Get_length())) {
-            throw IndexOutOfRange();
-        }
+        if ((index < 0) || (index >= Get_length())) { throw IndexOutOfRange(); }
         return items -> Get_list_index(index);
     }
     
     long Get_length() const override { return items -> Get_length(); }
     
     Sequence<T>* Get_subsequence(long start_index, long end_index) const override {
-        if ((start_index < 0) || (end_index >= Get_length())) {
-            throw IndexOutOfRange();
-        }
-        if (start_index > end_index) {
-            throw IndexesTranslated();
-        }
+        if ((start_index < 0) || (end_index >= Get_length())) { throw IndexOutOfRange(); }
+        if (start_index > end_index) { throw IndexesTranslated(); }
 
         ListSequence<T> *result = new ListSequence<T>();
         Enumerator<T> enumerator = items -> Get_enumerator();
@@ -85,18 +75,15 @@ public:
     }
     
     Sequence<T>* Insert_at(T item, long index) override {
-        if ((index < 0) || (index > Get_length())) {
-            throw IndexOutOfRange();
-        }
+        if ((index < 0) || (index > Get_length())) { throw IndexOutOfRange(); }
+
         ListSequence<T> *result = Instance();
         result -> items -> Insert_at(item, index);
         return result;
     }
     
     Sequence<T>* Concat(Sequence<T> *other) override {
-        if (other == nullptr) {
-            throw NullPointerError();
-        }
+        if (other == nullptr) { throw NullPointerError(); }
 
         ListSequence<T> *result = Instance();
         LinkedList<T> *new_list = new LinkedList<T>();
@@ -116,9 +103,7 @@ public:
     }
 
     Sequence<T>* Map(T (*function)(T)) const override {
-        if (function == nullptr) {
-            throw NullPointerError();
-        }
+        if (function == nullptr) { throw NullPointerError(); }
 
         ListSequence<T> *result = new ListSequence<T>();
         Enumerator<T> enumerator = items -> Get_enumerator();
@@ -130,9 +115,7 @@ public:
     }
     
     Sequence<T>* Where(bool (*predicate)(T)) const override {
-        if (predicate == nullptr) {
-            throw NullPointerError();
-        }
+        if (predicate == nullptr) { throw NullPointerError(); }
 
         ListSequence<T> *result = new ListSequence<T>();
         Enumerator<T> enumerator = items -> Get_enumerator();
@@ -146,9 +129,7 @@ public:
     }
     
     T Reduce(T (*function)(T, T), T init) const override {
-        if (function == nullptr) {
-            throw NullPointerError();
-        }
+        if (function == nullptr) { throw NullPointerError(); }
         
         T result = init;
         Enumerator<T> enumerator = items -> Get_enumerator();
@@ -205,7 +186,7 @@ public:
 
         LinkedList<T> *new_list = new LinkedList<T>();
         Enumerator<T> enumerator = result -> items -> Get_enumerator();
-        long tail_count = (length - start - count);
+        long tail_count = length - start - count;
         for (long counter = 0; counter < tail_count; counter ++) {
             enumerator.Move_next();
             new_list -> Prepend(enumerator.Get_current());
@@ -231,9 +212,7 @@ public:
     }
     
     Sequence<T>* Zip(Sequence<T> *other) const override {
-        if (other == nullptr) {
-            throw NullPointerError();
-        }
+        if (other == nullptr) { throw NullPointerError(); }
 
         ListSequence<T> *result = new ListSequence<T>();
         Enumerator<T> this_enumerator = items -> Get_enumerator();
@@ -246,9 +225,7 @@ public:
     }
     
     Sequence<T>* Flat_map(Sequence<T>* (*function)(T)) const override {
-        if (function == nullptr) {
-            throw NullPointerError();
-        }
+        if (function == nullptr) { throw NullPointerError(); }
         
         ListSequence<T> *result = new ListSequence<T>();
         Enumerator<T> enumerator = items -> Get_enumerator();
@@ -287,21 +264,16 @@ public:
                 return false;
             }
             
-            T Get_current() override {
-                return seq -> Get(position);
-            }
+            T Get_current() override { return seq -> Get(position); }
             
-            void Reset() override {
-                position = -1;
-            }
+            void Reset() override { position = -1; }
         };
         return Enumerator<T>(new ListSequenceEnumerator(this));
     }
 
     bool operator==(const Sequence<T> &other) const override {
-        if (Get_length() != other.Get_length()) {
-            return false;
-        }
+        if (Get_length() != other.Get_length()) { return false; }
+        
         long length = Get_length();
 
         Enumerator<T> this_enum = items -> Get_enumerator();
