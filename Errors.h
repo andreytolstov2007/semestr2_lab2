@@ -5,13 +5,9 @@
 
 class Errors {
 public:
-    explicit Errors(const std::string &msg) {
-        error_message = msg;
-    }
+    explicit Errors(const std::string &msg) { error_message = msg; }
     virtual ~Errors() {}
-    virtual const std::string& Message() const {
-        return error_message;
-    }
+    virtual const std::string& Message() const { return error_message; }
 
 protected:
     std::string error_message;
