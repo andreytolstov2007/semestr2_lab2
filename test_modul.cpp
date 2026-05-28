@@ -57,6 +57,15 @@ int sum_int(int acc, int x) {
     return acc + x;
 }
 
+Sequence<int>* duplicate(int x) {
+    MutableArraySequence<int> *seq = new MutableArraySequence<int>();
+    seq -> Append(x);
+    seq -> Append(x);
+    return seq;
+}
+
+// ==================== DynamicArray ====================
+
 void Test_DynamicArray_default_constructor() {
     DynamicArray<int> arr;
     ASSERT_EQ(arr.Get_length(), 64);
@@ -118,6 +127,8 @@ void Test_DynamicArray_resize_negative() {
     DynamicArray<int> arr(3);
     ASSERT_THROWS(arr.Resize(-1), IndexOutOfRange);
 }
+
+// ==================== LinkedList ====================
 
 void Test_LinkedList_default_constructor() {
     LinkedList<int> list;
@@ -204,6 +215,8 @@ void Test_LinkedList_concat() {
     ASSERT_EQ(result.Get_first(), 1);
     ASSERT_EQ(result.Get_last(), 4);
 }
+
+// ==================== MutableArraySequence ====================
 
 void Test_MutableArraySequence_default_constructor() {
     MutableArraySequence<int> seq;
@@ -294,6 +307,8 @@ void Test_MutableArraySequence_where() {
     MutableArraySequence<int> seq(items, 4);
     Sequence<int> *filtered = seq.Where(is_even);
     ASSERT_EQ(filtered -> Get_length(), 2);
+    ASSERT_EQ(filtered -> Get(0), 2);
+    ASSERT_EQ(filtered -> Get(1), 4);
     delete filtered;
 }
 
@@ -348,6 +363,62 @@ void Test_MutableArraySequence_concat_same_pointer() {
     Sequence<int> *result = seq1.Concat(&seq2);
     ASSERT_EQ(result, &seq1);
 }
+
+void Test_MutableArraySequence_slice() {
+    int items[] = {10, 20, 30, 40, 50};
+    MutableArraySequence<int> seq(items, 5);
+    Sequence<int> *result = seq.Slice(1, 2);
+    ASSERT_EQ(result -> Get_length(), 3);
+    ASSERT_EQ(result -> Get(0), 10);
+    ASSERT_EQ(result -> Get(1), 40);
+    ASSERT_EQ(result -> Get(2), 50);
+}
+
+void Test_MutableArraySequence_slice_with_insert() {
+    int items[] = {10, 20, 30, 40, 50};
+    int insert_items[] = {60, 70};
+    MutableArraySequence<int> seq(items, 5);
+    MutableArraySequence<int> insert_seq(insert_items, 2);
+    Sequence<int> *result = seq.Slice(1, 2, &insert_seq);
+    ASSERT_EQ(result -> Get_length(), 5);
+    ASSERT_EQ(result -> Get(0), 10);
+    ASSERT_EQ(result -> Get(1), 60);
+    ASSERT_EQ(result -> Get(2), 70);
+    ASSERT_EQ(result -> Get(3), 40);
+    ASSERT_EQ(result -> Get(4), 50);
+}
+
+void Test_MutableArraySequence_zip() {
+    int items1[] = {1, 3, 5};
+    int items2[] = {2, 4, 6};
+    MutableArraySequence<int> seq1(items1, 3);
+    MutableArraySequence<int> seq2(items2, 3);
+    Sequence<int> *result = seq1.Zip(&seq2);
+    ASSERT_EQ(result -> Get_length(), 6);
+    ASSERT_EQ(result -> Get(0), 1);
+    ASSERT_EQ(result -> Get(1), 2);
+    ASSERT_EQ(result -> Get(2), 3);
+    ASSERT_EQ(result -> Get(3), 4);
+    ASSERT_EQ(result -> Get(4), 5);
+    ASSERT_EQ(result -> Get(5), 6);
+    delete result;
+}
+
+void Test_MutableArraySequence_flat_map() {
+    int items[] = {1, 2, 3};
+    MutableArraySequence<int> seq(items, 3);
+    Sequence<int> *result = seq.Flat_map(duplicate);
+    ASSERT_EQ(result -> Get_length(), 6);
+    ASSERT_EQ(result -> Get(0), 1);
+    ASSERT_EQ(result -> Get(1), 1);
+    ASSERT_EQ(result -> Get(2), 2);
+    ASSERT_EQ(result -> Get(3), 2);
+    ASSERT_EQ(result -> Get(4), 3);
+    ASSERT_EQ(result -> Get(5), 3);
+    delete result;
+}
+
+// ==================== MutableListSequence ====================
 
 void Test_MutableListSequence_default_constructor() {
     MutableListSequence<int> seq;
@@ -404,6 +475,7 @@ void Test_MutableListSequence_get_subsequence() {
     Sequence<int> *sub = seq.Get_subsequence(1, 3);
     ASSERT_EQ(sub -> Get_length(), 3);
     ASSERT_EQ(sub -> Get_first(), 20);
+    ASSERT_EQ(sub -> Get_last(), 40);
     delete sub;
 }
 
@@ -438,6 +510,8 @@ void Test_MutableListSequence_where() {
     MutableListSequence<int> seq(items, 4);
     Sequence<int> *filtered = seq.Where(is_even);
     ASSERT_EQ(filtered -> Get_length(), 2);
+    ASSERT_EQ(filtered -> Get(0), 2);
+    ASSERT_EQ(filtered -> Get(1), 4);
     delete filtered;
 }
 
@@ -493,6 +567,137 @@ void Test_MutableListSequence_concat_same_pointer() {
     ASSERT_EQ(result, &seq1);
 }
 
+void Test_MutableListSequence_slice() {
+    int items[] = {10, 20, 30, 40, 50};
+    MutableListSequence<int> seq(items, 5);
+    Sequence<int> *result = seq.Slice(1, 2);
+    ASSERT_EQ(result -> Get_length(), 3);
+    ASSERT_EQ(result -> Get(0), 10);
+    ASSERT_EQ(result -> Get(1), 40);
+    ASSERT_EQ(result -> Get(2), 50);
+    ASSERT_EQ(result, &seq);
+}
+
+void Test_MutableListSequence_slice_with_insert() {
+    int items[] = {10, 20, 30, 40, 50};
+    int insert_items[] = {60, 70};
+    MutableListSequence<int> seq(items, 5);
+    MutableListSequence<int> insert_seq(insert_items, 2);
+    Sequence<int> *result = seq.Slice(1, 2, &insert_seq);
+    ASSERT_EQ(result -> Get_length(), 5);
+    ASSERT_EQ(result -> Get(0), 10);
+    ASSERT_EQ(result -> Get(1), 60);
+    ASSERT_EQ(result -> Get(2), 70);
+    ASSERT_EQ(result -> Get(3), 40);
+    ASSERT_EQ(result -> Get(4), 50);
+}
+
+void Test_MutableListSequence_slice_all() {
+    int items[] = {10, 20, 30};
+    MutableListSequence<int> seq(items, 3);
+    Sequence<int> *result = seq.Slice(0, 3);
+    ASSERT_EQ(result -> Get_length(), 0);
+}
+
+void Test_MutableListSequence_slice_from_start() {
+    int items[] = {10, 20, 30, 40};
+    MutableListSequence<int> seq(items, 4);
+    Sequence<int> *result = seq.Slice(0, 2);
+    ASSERT_EQ(result -> Get_length(), 2);
+    ASSERT_EQ(result -> Get(0), 30);
+    ASSERT_EQ(result -> Get(1), 40);
+}
+
+void Test_MutableListSequence_slice_from_end() {
+    int items[] = {10, 20, 30, 40};
+    MutableListSequence<int> seq(items, 4);
+    Sequence<int> *result = seq.Slice(2, 2);
+    ASSERT_EQ(result -> Get_length(), 2);
+    ASSERT_EQ(result -> Get(0), 10);
+    ASSERT_EQ(result -> Get(1), 20);
+}
+
+void Test_MutableListSequence_slice_all_replace() {
+    int items[] = {10, 20};
+    int insert_items[] = {30, 40, 50};
+    MutableListSequence<int> seq(items, 2);
+    MutableListSequence<int> insert_seq(insert_items, 3);
+    Sequence<int> *result = seq.Slice(0, 2, &insert_seq);
+    ASSERT_EQ(result -> Get_length(), 3);
+    ASSERT_EQ(result -> Get(0), 30);
+    ASSERT_EQ(result -> Get(1), 40);
+    ASSERT_EQ(result -> Get(2), 50);
+}
+
+void Test_MutableListSequence_zip() {
+    int items1[] = {1, 3, 5};
+    int items2[] = {2, 4, 6};
+    MutableListSequence<int> seq1(items1, 3);
+    MutableListSequence<int> seq2(items2, 3);
+    Sequence<int> *result = seq1.Zip(&seq2);
+    ASSERT_EQ(result -> Get_length(), 6);
+    ASSERT_EQ(result -> Get(0), 1);
+    ASSERT_EQ(result -> Get(1), 2);
+    ASSERT_EQ(result -> Get(2), 3);
+    ASSERT_EQ(result -> Get(3), 4);
+    ASSERT_EQ(result -> Get(4), 5);
+    ASSERT_EQ(result -> Get(5), 6);
+    delete result;
+}
+
+void Test_MutableListSequence_zip_different_length() {
+    int items1[] = {1, 3, 5, 7};
+    int items2[] = {2, 4};
+    MutableListSequence<int> seq1(items1, 4);
+    MutableListSequence<int> seq2(items2, 2);
+    Sequence<int> *result = seq1.Zip(&seq2);
+    ASSERT_EQ(result -> Get_length(), 4);
+    ASSERT_EQ(result -> Get(0), 1);
+    ASSERT_EQ(result -> Get(1), 2);
+    ASSERT_EQ(result -> Get(2), 3);
+    ASSERT_EQ(result -> Get(3), 4);
+    delete result;
+}
+
+void Test_MutableListSequence_flat_map() {
+    int items[] = {1, 2, 3};
+    MutableListSequence<int> seq(items, 3);
+    Sequence<int> *result = seq.Flat_map(duplicate);
+    ASSERT_EQ(result -> Get_length(), 6);
+    ASSERT_EQ(result -> Get(0), 1);
+    ASSERT_EQ(result -> Get(1), 1);
+    ASSERT_EQ(result -> Get(2), 2);
+    ASSERT_EQ(result -> Get(3), 2);
+    ASSERT_EQ(result -> Get(4), 3);
+    ASSERT_EQ(result -> Get(5), 3);
+    delete result;
+}
+
+void Test_MutableListSequence_try_get_first() {
+    int items[] = {1, 2, 3, 4, 5};
+    MutableListSequence<int> seq(items, 5);
+    Option<int> opt = seq.Try_get_first(is_even);
+    ASSERT_EQ(opt.Is_some(), true);
+    ASSERT_EQ(opt.Get(), 2);
+}
+
+void Test_MutableListSequence_try_get_last() {
+    int items[] = {1, 2, 3, 4, 5};
+    MutableListSequence<int> seq(items, 5);
+    Option<int> opt = seq.Try_get_last(is_even);
+    ASSERT_EQ(opt.Is_some(), true);
+    ASSERT_EQ(opt.Get(), 4);
+}
+
+void Test_MutableListSequence_try_get_first_not_found() {
+    int items[] = {1, 3, 5};
+    MutableListSequence<int> seq(items, 3);
+    Option<int> opt = seq.Try_get_first(is_even);
+    ASSERT_EQ(opt.Is_none(), true);
+}
+
+// ==================== ImmutableArraySequence ====================
+
 void Test_ImmutableArraySequence_append_new_pointer() {
     int items[] = {1, 2, 3};
     ImmutableArraySequence<int> seq(items, 3);
@@ -504,31 +709,9 @@ void Test_ImmutableArraySequence_append_new_pointer() {
     delete result;
 }
 
-void Test_ImmutableListSequence_append_new_pointer() {
-    int items[] = {1, 2, 3};
-    ImmutableListSequence<int> seq(items, 3);
-    Sequence<int> *result = seq.Append(4);
-    ASSERT_EQ(result != &seq, true);
-    ASSERT_EQ(result -> Get_length(), 4);
-    ASSERT_EQ(result -> Get_last(), 4);
-    ASSERT_EQ(seq.Get_length(), 3);
-    delete result;
-}
-
 void Test_ImmutableArraySequence_prepend_new_pointer() {
     int items[] = {1, 2, 3};
     ImmutableArraySequence<int> seq(items, 3);
-    Sequence<int> *result = seq.Prepend(0);
-    ASSERT_EQ(result != &seq, true);
-    ASSERT_EQ(result -> Get_length(), 4);
-    ASSERT_EQ(result -> Get_first(), 0);
-    ASSERT_EQ(seq.Get_length(), 3);
-    delete result;
-}
-
-void Test_ImmutableListSequence_prepend_new_pointer() {
-    int items[] = {1, 2, 3};
-    ImmutableListSequence<int> seq(items, 3);
     Sequence<int> *result = seq.Prepend(0);
     ASSERT_EQ(result != &seq, true);
     ASSERT_EQ(result -> Get_length(), 4);
@@ -549,6 +732,40 @@ void Test_ImmutableArraySequence_concat_new_pointer() {
     delete result;
 }
 
+void Test_ImmutableArraySequence_map() {
+    int items[] = {1, 2, 3};
+    ImmutableArraySequence<int> seq(items, 3);
+    Sequence<int> *mapped = seq.Map(square_int);
+    ASSERT_EQ(mapped -> Get(0), 1);
+    ASSERT_EQ(mapped -> Get(1), 4);
+    ASSERT_EQ(mapped -> Get(2), 9);
+    delete mapped;
+}
+
+// ==================== ImmutableListSequence ====================
+
+void Test_ImmutableListSequence_append_new_pointer() {
+    int items[] = {1, 2, 3};
+    ImmutableListSequence<int> seq(items, 3);
+    Sequence<int> *result = seq.Append(4);
+    ASSERT_EQ(result != &seq, true);
+    ASSERT_EQ(result -> Get_length(), 4);
+    ASSERT_EQ(result -> Get_last(), 4);
+    ASSERT_EQ(seq.Get_length(), 3);
+    delete result;
+}
+
+void Test_ImmutableListSequence_prepend_new_pointer() {
+    int items[] = {1, 2, 3};
+    ImmutableListSequence<int> seq(items, 3);
+    Sequence<int> *result = seq.Prepend(0);
+    ASSERT_EQ(result != &seq, true);
+    ASSERT_EQ(result -> Get_length(), 4);
+    ASSERT_EQ(result -> Get_first(), 0);
+    ASSERT_EQ(seq.Get_length(), 3);
+    delete result;
+}
+
 void Test_ImmutableListSequence_concat_new_pointer() {
     int items1[] = {1, 2};
     int items2[] = {3, 4};
@@ -561,9 +778,9 @@ void Test_ImmutableListSequence_concat_new_pointer() {
     delete result;
 }
 
-void Test_ImmutableArraySequence_map() {
+void Test_ImmutableListSequence_map() {
     int items[] = {1, 2, 3};
-    ImmutableArraySequence<int> seq(items, 3);
+    ImmutableListSequence<int> seq(items, 3);
     Sequence<int> *mapped = seq.Map(square_int);
     ASSERT_EQ(mapped -> Get(0), 1);
     ASSERT_EQ(mapped -> Get(1), 4);
@@ -571,15 +788,7 @@ void Test_ImmutableArraySequence_map() {
     delete mapped;
 }
 
-void Test_ImmutableListSequence_map() {
-    int items[] = {1, 2, 3};
-    ImmutableListSequence<int> seq(items, 3);
-    Sequence<int> *mapped = seq.Map(square_int);
-    ASSERT_EQ(mapped -> Get(0), 1);
-    ASSERT_EQ(mapped -> Get(1), 4);
-        ASSERT_EQ(mapped -> Get(2), 9);
-    delete mapped;
-}
+// ==================== Run_tests ====================
 
 void Run_tests() {
     Register_test(Test_DynamicArray_default_constructor, "DynamicArray_default_constructor");
@@ -622,6 +831,10 @@ void Run_tests() {
     Register_test(Test_MutableArraySequence_append_same_pointer, "MutableArraySequence_append_same_pointer");
     Register_test(Test_MutableArraySequence_prepend_same_pointer, "MutableArraySequence_prepend_same_pointer");
     Register_test(Test_MutableArraySequence_concat_same_pointer, "MutableArraySequence_concat_same_pointer");
+    Register_test(Test_MutableArraySequence_slice, "MutableArraySequence_slice");
+    Register_test(Test_MutableArraySequence_slice_with_insert, "MutableArraySequence_slice_with_insert");
+    Register_test(Test_MutableArraySequence_zip, "MutableArraySequence_zip");
+    Register_test(Test_MutableArraySequence_flat_map, "MutableArraySequence_flat_map");
 
     Register_test(Test_MutableListSequence_default_constructor, "MutableListSequence_default_constructor");
     Register_test(Test_MutableListSequence_array_constructor, "MutableListSequence_array_constructor");
@@ -642,14 +855,27 @@ void Run_tests() {
     Register_test(Test_MutableListSequence_append_same_pointer, "MutableListSequence_append_same_pointer");
     Register_test(Test_MutableListSequence_prepend_same_pointer, "MutableListSequence_prepend_same_pointer");
     Register_test(Test_MutableListSequence_concat_same_pointer, "MutableListSequence_concat_same_pointer");
+    Register_test(Test_MutableListSequence_slice, "MutableListSequence_slice");
+    Register_test(Test_MutableListSequence_slice_with_insert, "MutableListSequence_slice_with_insert");
+    Register_test(Test_MutableListSequence_slice_all, "MutableListSequence_slice_all");
+    Register_test(Test_MutableListSequence_slice_from_start, "MutableListSequence_slice_from_start");
+    Register_test(Test_MutableListSequence_slice_from_end, "MutableListSequence_slice_from_end");
+    Register_test(Test_MutableListSequence_slice_all_replace, "MutableListSequence_slice_all_replace");
+    Register_test(Test_MutableListSequence_zip, "MutableListSequence_zip");
+    Register_test(Test_MutableListSequence_zip_different_length, "MutableListSequence_zip_different_length");
+    Register_test(Test_MutableListSequence_flat_map, "MutableListSequence_flat_map");
+    Register_test(Test_MutableListSequence_try_get_first, "MutableListSequence_try_get_first");
+    Register_test(Test_MutableListSequence_try_get_last, "MutableListSequence_try_get_last");
+    Register_test(Test_MutableListSequence_try_get_first_not_found, "MutableListSequence_try_get_first_not_found");
 
     Register_test(Test_ImmutableArraySequence_append_new_pointer, "ImmutableArraySequence_append_new_pointer");
-    Register_test(Test_ImmutableListSequence_append_new_pointer, "ImmutableListSequence_append_new_pointer");
     Register_test(Test_ImmutableArraySequence_prepend_new_pointer, "ImmutableArraySequence_prepend_new_pointer");
-    Register_test(Test_ImmutableListSequence_prepend_new_pointer, "ImmutableListSequence_prepend_new_pointer");
     Register_test(Test_ImmutableArraySequence_concat_new_pointer, "ImmutableArraySequence_concat_new_pointer");
-    Register_test(Test_ImmutableListSequence_concat_new_pointer, "ImmutableListSequence_concat_new_pointer");
     Register_test(Test_ImmutableArraySequence_map, "ImmutableArraySequence_map");
+
+    Register_test(Test_ImmutableListSequence_append_new_pointer, "ImmutableListSequence_append_new_pointer");
+    Register_test(Test_ImmutableListSequence_prepend_new_pointer, "ImmutableListSequence_prepend_new_pointer");
+    Register_test(Test_ImmutableListSequence_concat_new_pointer, "ImmutableListSequence_concat_new_pointer");
     Register_test(Test_ImmutableListSequence_map, "ImmutableListSequence_map");
 
     std::cout << "\n=== Test Results ===" << std::endl;
@@ -659,4 +885,4 @@ void Run_tests() {
     if (tests_failed == 0) {
         std::cout << "All tests passed!" << std::endl;
     }
-} //Run_tests()
+}
