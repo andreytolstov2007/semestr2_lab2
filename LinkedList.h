@@ -14,12 +14,8 @@ public:
     }
 
     LinkedList(T *items, long length) : LinkedList() {
-        if (items == nullptr) {
-            throw NullPointerError();
-        }
-        if (length < 0) {
-            throw IndexOutOfRange();
-        }
+        if (items == nullptr) { throw NullPointerError(); }
+        if (length < 0) { throw IndexOutOfRange(); }
 
         for (long items_index = 0; items_index < length; items_index ++) {
             Append(items[items_index]);
@@ -47,9 +43,8 @@ public:
         new_node -> data = item;
         new_node -> next = top;
         top = new_node;
-        if (list_length == 0) {
-            low = new_node;
-        }
+        if (list_length == 0) { low = new_node; }
+
         list_length ++;
     }
     
@@ -68,13 +63,10 @@ public:
     }
 
     T Pop() {
-        if (list_length == 0) {
-            throw EmptyCollection();
-        }
+        if (list_length == 0) { throw EmptyCollection(); }
 
-        if (list_length == 1) {
-            low = nullptr;
-        }
+        if (list_length == 1) { low = nullptr; }
+
         Node *to_delete = top;
         top = top -> next;
         T value = to_delete -> data;
@@ -84,27 +76,20 @@ public:
     } 
 
     T Get_first() const {
-        if (list_length == 0) {
-            throw EmptyCollection();
-        }
+        if (list_length == 0) { throw EmptyCollection(); }
         return low -> data;
     }
 
     T Get_last() const {
-        if (list_length == 0) {
-            throw EmptyCollection();
-        }
+        if (list_length == 0) { throw EmptyCollection(); }
         return top -> data;
     }
 
-    long Get_length() const {
-        return list_length;
-    }
+    long Get_length() const { return list_length; }
 
     T Get_list_index(long list_index) const {
-        if ((list_index < 0) || (list_index >= list_length)) {
-            throw IndexOutOfRange();
-        }
+        if ((list_index < 0) || (list_index >= list_length)) { throw IndexOutOfRange(); }
+
         Node *current_element = top;
         for (long counter = 0; counter < (list_length - 1 - list_index); counter ++) {
             current_element = current_element -> next;
@@ -113,12 +98,8 @@ public:
     }
 
     LinkedList<T> Get_sub_list(long start_index, long end_index) {
-        if ((start_index < 0) || (end_index >= list_length)) {
-            throw IndexOutOfRange();
-        }
-        if (start_index > end_index) {
-            throw IndexesTranslated();
-        }
+        if ((start_index < 0) || (end_index >= list_length)) { throw IndexOutOfRange(); }
+        if (start_index > end_index) { throw IndexesTranslated(); }
         
         LinkedList<T> sub_list;
         Node *current_element = top;
@@ -133,9 +114,7 @@ public:
     }
 
     void Insert_at(T item, long list_index) {
-        if ((list_index < 0) || (list_index > list_length)) {
-            throw IndexOutOfRange();
-        }
+        if ((list_index < 0) || (list_index > list_length)) { throw IndexOutOfRange(); }
 
         if (list_index == 0) {
             Prepend(item);
