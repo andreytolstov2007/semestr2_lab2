@@ -179,7 +179,6 @@ public:
     Sequence<T>* Slice(long start, long count, Sequence<T> *insert_seq = nullptr) override {
         ListSequence<T> *result = Instance();
         long length = result -> Get_length();
-        long actual_start;
         if ((start < 0) || (count < 0) || (start >= length) || (start + count > length)) {
             throw IndexOutOfRange();
         }
